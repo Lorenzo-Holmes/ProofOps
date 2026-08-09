@@ -1,0 +1,16 @@
+﻿{
+  "name": "proofops",
+  "title": "ProofOps Incident Command",
+  "description": "Evidence-driven local incident-response tools with independent verification and human approval gates.",
+  "version": "0.1.0",
+  "transport": {
+    "type": "streamable-http",
+    "url": "http://HOST:PORT/mcp"
+  },
+  "protocolVersions": ["2026-07-28", "2025-11-25", "2025-06-18"],
+  "security": {
+    "defaultBinding": "127.0.0.1",
+    "humanApprovalRequiredFor": ["proofops.approve_incident"],
+    "productionCredentialsIncluded": false
+  }
+}

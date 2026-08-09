@@ -1,0 +1,26 @@
+{
+  "id": "execute_rollback",
+  "name": "execute-rollback",
+  "version": "1.0.0",
+  "purpose": "恢复到已验证的部署点并二次检查。",
+  "inputs": [
+    "deployment_id",
+    "rollback_point",
+    "approval_token"
+  ],
+  "outputs": [
+    "rollback_result"
+  ],
+  "invocation_conditions": "验证失败且存在有效回滚点时。",
+  "dependent_tools": [
+    "deployment",
+    "monitoring"
+  ],
+  "failure_handling": "重复调用保持幂等；失败时立即升级人工。",
+  "security_boundary": "仅允许回滚当前事件关联的部署。",
+  "reuse_value": "适用于支持版本化发布的平台。",
+  "agent_ids": [
+    "execution-agent",
+    "verification-agent"
+  ]
+}

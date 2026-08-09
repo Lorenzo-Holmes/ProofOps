@@ -1,0 +1,26 @@
+{
+  "id": "verify_recovery",
+  "name": "verify-recovery",
+  "version": "1.0.0",
+  "purpose": "使用独立基线验证功能和SLO。",
+  "inputs": [
+    "baseline",
+    "candidate_metrics",
+    "regression_suite"
+  ],
+  "outputs": [
+    "verdict",
+    "verification_report"
+  ],
+  "invocation_conditions": "沙箱或灰度执行结束后。",
+  "dependent_tools": [
+    "monitoring",
+    "ci"
+  ],
+  "failure_handling": "任一强制断言失败即拒绝验收并触发回滚。",
+  "security_boundary": "只读验证，不接受执行方覆盖判定。",
+  "reuse_value": "可用于任何定义了验收契约的服务。",
+  "agent_ids": [
+    "verification-agent"
+  ]
+}

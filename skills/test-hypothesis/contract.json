@@ -1,0 +1,24 @@
+{
+  "id": "test_hypothesis",
+  "name": "test-hypothesis",
+  "version": "1.0.0",
+  "purpose": "运行可重复诊断并排序根因。",
+  "inputs": [
+    "candidate_hypotheses",
+    "evidence_bundle"
+  ],
+  "outputs": [
+    "ranked_root_causes",
+    "counter_evidence"
+  ],
+  "invocation_conditions": "至少存在两个候选假设时。",
+  "dependent_tools": [
+    "diagnostic_runner"
+  ],
+  "failure_handling": "诊断失败时保留不确定度并请求补充证据。",
+  "security_boundary": "命令只能在隔离、只读环境运行。",
+  "reuse_value": "适用于软件、配置与依赖故障。",
+  "agent_ids": [
+    "diagnosis-agent"
+  ]
+}

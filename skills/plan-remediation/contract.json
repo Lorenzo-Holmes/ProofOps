@@ -1,0 +1,25 @@
+{
+  "id": "plan_remediation",
+  "name": "plan-remediation",
+  "version": "1.0.0",
+  "purpose": "生成最小变更及回滚计划。",
+  "inputs": [
+    "verified_root_cause",
+    "risk_policy"
+  ],
+  "outputs": [
+    "patch",
+    "risk_score",
+    "rollback_plan"
+  ],
+  "invocation_conditions": "根因置信度满足策略阈值时。",
+  "dependent_tools": [
+    "repository"
+  ],
+  "failure_handling": "证据不足或风险过高时停止并升级给人工。",
+  "security_boundary": "无部署凭据；必须同时输出回滚计划。",
+  "reuse_value": "可复用于代码、配置和发布修复。",
+  "agent_ids": [
+    "remediation-agent"
+  ]
+}

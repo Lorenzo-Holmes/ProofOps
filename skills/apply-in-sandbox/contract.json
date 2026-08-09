@@ -1,0 +1,26 @@
+{
+  "id": "apply_in_sandbox",
+  "name": "apply-in-sandbox",
+  "version": "1.0.0",
+  "purpose": "在隔离环境应用补丁并运行测试。",
+  "inputs": [
+    "patch",
+    "approval_token",
+    "idempotency_key"
+  ],
+  "outputs": [
+    "build_result",
+    "test_result"
+  ],
+  "invocation_conditions": "审批通过且令牌有效时。",
+  "dependent_tools": [
+    "ci",
+    "sandbox"
+  ],
+  "failure_handling": "超时或失败时清理工作区并阻止灰度。",
+  "security_boundary": "禁止直连生产；令牌短期有效且单次使用。",
+  "reuse_value": "适用于多种CI与容器平台。",
+  "agent_ids": [
+    "execution-agent"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "incident_intake",
+  "name": "incident-intake",
+  "version": "1.0.0",
+  "purpose": "标准化告警或工单并创建事件。",
+  "inputs": [
+    "scenario_id",
+    "trigger"
+  ],
+  "outputs": [
+    "incident",
+    "trace_id"
+  ],
+  "invocation_conditions": "收到有效事件输入时。",
+  "dependent_tools": [
+    "event_bus"
+  ],
+  "failure_handling": "拒绝缺少服务或严重级别的输入并记录原因。",
+  "security_boundary": "仅创建内部事件，不调用写操作。",
+  "reuse_value": "可复用于告警、工单和发布事件。",
+  "agent_ids": [
+    "incident-commander"
+  ]
+}

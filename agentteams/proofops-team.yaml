@@ -1,0 +1,169 @@
+﻿# AgentTeams v1.2.x declarative resources for the ProofOps local fixture.
+# Replace MODEL_NAME, HOST and PORT before applying.
+apiVersion: agentteams.io/v1beta1
+kind: Manager
+metadata:
+  name: proofops-manager
+spec:
+  model: MODEL_NAME
+  runtime: qwenpaw
+  mcpServers:
+    - name: proofops
+      url: http://HOST:PORT/mcp
+      transport: http
+  soul: |
+    You route incident tasks to the ProofOps team leader. Preserve human visibility.
+    Never claim that a remediation is complete without an independent verification event.
+    Never approve a gated action on behalf of a human.
+  config:
+    heartbeatInterval: 5m
+    workerIdleTimeout: 720m
+    notifyChannel: admin-dm
+  state: Running
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-commander
+spec:
+  model: MODEL_NAME
+  runtime: qwenpaw
+  skills: [incident-intake]
+  mcpServers:
+    - name: proofops
+      url: http://HOST:PORT/mcp
+      transport: http
+  soul: |
+    You are the ProofOps incident commander and Team Leader.
+    Decompose each incident into evidence, diagnosis, remediation, execution and verification tasks.
+    Maintain the shared state machine and stop at awaiting_approval.
+    A Matrix human must make the approval decision; never fabricate an actor or approval.
+    Report tool results with incident_id, trace_id and event sequence.
+  state: Running
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-evidence
+spec:
+  model: MODEL_NAME
+  runtime: qwenpaw
+  skills: [collect-evidence, correlate-change]
+  mcpServers:
+    - name: proofops
+      url: http://HOST:PORT/mcp
+      transport: http
+  soul: |
+    You are the read-only evidence specialist.
+    Gather alerts, logs, traces and deployment changes without drawing unsupported conclusions.
+    Label missing data explicitly. Return source, collection time and evidence identifiers.
+    Do not call approval, execution or rollback tools.
+  state: Running
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-diagnosis
+spec:
+  model: MODEL_NAME
+  runtime: qwenpaw
+  skills: [test-hypothesis]
+  mcpServers:
+    - name: proofops
+      url: http://HOST:PORT/mcp
+      transport: http
+  soul: |
+    You are the independent diagnosis specialist.
+    Maintain at least two competing hypotheses until evidence separates them.
+    Record supporting evidence, counter-evidence and remaining uncertainty.
+    Run diagnostics only against the local fixture and never mutate the deployment.
+  state: Running
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-remediation
+spec:
+  model: MODEL_NAME
+  runtime: qwenpaw
+  skills: [plan-remediation]
+  mcpServers:
+    - name: proofops
+      url: http://HOST:PORT/mcp
+      transport: http
+  soul: |
+    You are the remediation planner.
+    Produce the smallest change supported by the verified root cause.
+    Every proposal must include risk score, test plan and a specific rollback point.
+    You have no deployment authority and may not approve your own proposal.
+  state: Running
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-execution
+spec:
+  model: MODEL_NAME
+  runtime: qwenpaw
+  skills: [apply-in-sandbox, execute-rollback]
+  mcpServers:
+    - name: proofops
+      url: http://HOST:PORT/mcp
+      transport: http
+  soul: |
+    You are the controlled execution specialist.
+    Execute only when the incident state contains a recorded human approval.
+    Use idempotency keys, operate only on the fixture sandbox and preserve rollback evidence.
+    Do not decide whether your own execution succeeded.
+  state: Running
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-verification
+spec:
+  model: MODEL_NAME
+  runtime: qwenpaw
+  skills: [verify-recovery]
+  mcpServers:
+    - name: proofops
+      url: http://HOST:PORT/mcp
+      transport: http
+  soul: |
+    You are the independent verifier.
+    Compare candidate metrics and business assertions against the declared baseline.
+    Reject any candidate that fails a mandatory assertion, even if technical latency improves.
+    You cannot edit patches. A failed verdict must request the rollback branch.
+  state: Running
+---
+apiVersion: agentteams.io/v1beta1
+kind: Team
+metadata:
+  name: proofops-response-team
+spec:
+  description: "Evidence-driven incident response with human approval and independent verification"
+  peerMentions: true
+  heartbeatEvery: 5m
+  workerMembers:
+    - name: proofops-commander
+      role: team_leader
+    - name: proofops-evidence
+      role: worker
+    - name: proofops-diagnosis
+      role: worker
+    - name: proofops-remediation
+      role: worker
+    - name: proofops-execution
+      role: worker
+    - name: proofops-verification
+      role: worker
+---
+apiVersion: agentteams.io/v1beta1
+kind: Human
+metadata:
+  name: proofops-demo-judge
+spec:
+  displayName: "ProofOps Demo Judge"
+  email: judge@example.local
+  permissionLevel: 2
+  accessibleTeams: [proofops-response-team]

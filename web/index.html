@@ -1,0 +1,117 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0b0c0d">
+  <meta name="description" content="ProofOps 证据驱动的多智能体故障处置演示平台">
+  <title>ProofOps · Incident Command</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#incident-board">跳至事件时间线</a>
+  <div class="grid-noise" aria-hidden="true"></div>
+  <header class="masthead">
+    <div class="brand-lockup" aria-label="ProofOps">
+      <span class="brand-index">P/01</span>
+      <span class="brand-word">PROOF<span>OPS</span></span>
+      <span class="brand-cn">证据驱动故障闭环</span>
+    </div>
+    <div class="system-state">
+      <span class="eyebrow">LOCAL COMMAND FABRIC</span>
+      <span id="connection-state" class="connection-pill" data-state="connecting">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span class="connection-label">正在连接</span>
+      </span>
+    </div>
+  </header>
+  <section class="metric-rail" aria-label="运行指标">
+    <article><span>事件总数</span><strong id="metric-total">00</strong></article>
+    <article><span>活动事件</span><strong id="metric-active">00</strong></article>
+    <article><span>已恢复</span><strong id="metric-resolved">00</strong></article>
+    <article><span>已回滚</span><strong id="metric-rollback">00</strong></article>
+    <article class="metric-wide"><span>审计完整度</span><strong id="metric-audit">100.0%</strong></article>
+    <article class="metric-wide"><span>TRACE覆盖</span><strong id="metric-trace">100.0%</strong></article>
+  </section>
+  <main class="command-grid">
+    <aside class="left-rail" aria-label="场景与团队控制">
+      <section class="panel injection-panel">
+        <div class="panel-heading"><span class="panel-code">INPUT/01</span><h2>故障注入</h2></div>
+        <label for="scenario-select">选择可重复样本</label>
+        <select id="scenario-select" aria-describedby="scenario-detail"></select>
+        <p id="scenario-detail" class="fine-print">正在载入故障样本…</p>
+        <button class="action-primary" type="button" data-action="create-incident"><span>创建事件</span><span aria-hidden="true">↗</span></button>
+      </section>
+      <section class="panel incident-queue-panel">
+        <div class="panel-heading">
+          <span class="panel-code">QUEUE/02</span><h2>事件队列</h2>
+          <button class="icon-button" type="button" data-action="refresh" aria-label="刷新事件队列">↻</button>
+        </div>
+        <div id="incident-list" class="incident-list" aria-live="polite"></div>
+      </section>
+      <section class="panel agents-panel">
+        <div class="panel-heading"><span class="panel-code">TEAM/06</span><h2>Agent Identity</h2></div>
+        <ol id="agent-list" class="agent-list"></ol>
+      </section>
+    </aside>
+    <section class="operations-deck" aria-labelledby="incident-title">
+      <header class="incident-header">
+        <div>
+          <span id="incident-kicker" class="eyebrow">NO ACTIVE INCIDENT</span>
+          <h1 id="incident-title">选择样本并创建事件</h1>
+          <p id="incident-summary">系统将展示证据采集、根因验证、人工审批、受控执行与独立验收。</p>
+        </div>
+        <div class="incident-flags">
+          <span id="incident-severity" class="flag severity">—</span>
+          <span id="incident-status" class="flag status" data-status="idle">待命</span>
+        </div>
+      </header>
+      <ol id="state-pipeline" class="state-pipeline" aria-label="处置状态机">
+        <li data-stage="detected"><span>01</span>接入</li><li data-stage="triaging"><span>02</span>证据</li>
+        <li data-stage="diagnosing"><span>03</span>诊断</li><li data-stage="planning"><span>04</span>规划</li>
+        <li data-stage="awaiting_approval"><span>05</span>审批</li><li data-stage="executing"><span>06</span>执行</li>
+        <li data-stage="verifying"><span>07</span>验证</li><li data-stage="resolved"><span>08</span>闭环</li>
+      </ol>
+      <div class="deck-controls" role="group" aria-label="演示控制">
+        <button class="action-run" type="button" data-action="run-demo" disabled><span class="run-icon" aria-hidden="true">▶</span><span>自动运行</span></button>
+        <button class="action-secondary" type="button" data-action="advance" disabled>单步推进</button>
+        <span id="run-state" class="run-state">WAITING FOR INPUT</span>
+      </div>
+      <section id="incident-board" class="timeline-panel" tabindex="-1" aria-label="审计事件时间线">
+        <div class="section-ruler"><span>TRACE TIMELINE</span><span id="trace-id">TRACE / —</span></div>
+        <div id="timeline" class="timeline">
+          <div class="empty-state"><span class="empty-cross" aria-hidden="true">＋</span><p>暂无执行证据</p><small>CREATE AN INCIDENT TO BEGIN</small></div>
+        </div>
+      </section>
+    </section>
+    <aside class="right-rail" aria-label="证据与审计详情">
+      <section class="panel audit-panel">
+        <div class="panel-heading"><span class="panel-code">AUDIT/CHAIN</span><h2>证据完整性</h2></div>
+        <div class="audit-seal" id="audit-seal" data-valid="unknown"><span class="seal-mark">#</span><div><strong>等待事件</strong><small>SHA-256 HASH CHAIN</small></div></div>
+        <dl class="audit-stats"><div><dt>事件数</dt><dd id="audit-events">0</dd></div><div><dt>审批边界</dt><dd id="audit-approval">未触发</dd></div><div><dt>风险分</dt><dd id="audit-risk">—</dd></div></dl>
+      </section>
+      <section class="panel evidence-panel">
+        <div class="panel-heading"><span class="panel-code">EVIDENCE/LIVE</span><h2>当前证据</h2></div>
+        <div id="event-detail" class="event-detail"><p class="fine-print">点击时间线事件查看来源、指标与哈希摘要。</p></div>
+      </section>
+      <section class="panel contract-panel">
+        <div class="panel-heading"><span class="panel-code">SKILL/CONTRACT</span><h2>调用契约</h2></div>
+        <div id="skill-detail" class="skill-detail"><span class="mono-tag">NO SKILL SELECTED</span><p>Skill输入、输出、失败处理和安全边界将在执行时显示。</p></div>
+      </section>
+    </aside>
+  </main>
+  <footer class="footer-bar"><span>PROOFOPS / LOCAL FIXTURE / V0.1.0</span><span>AGENTTEAMS-READY · MCP-CONTRACT · HUMAN-IN-THE-LOOP</span></footer>
+  <dialog id="approval-dialog" class="approval-dialog" aria-labelledby="approval-title">
+    <form method="dialog" id="approval-form">
+      <span class="dialog-code">HUMAN GATE / REQUIRED</span><h2 id="approval-title">批准受控执行？</h2>
+      <p id="approval-copy">修复计划包含写操作。批准后仅在本地沙箱执行，并保留幂等键和回滚点。</p>
+      <label for="approval-actor">审批人</label><input id="approval-actor" name="actor" value="demo-judge" autocomplete="off" required>
+      <label for="approval-reason">审批意见</label><textarea id="approval-reason" name="reason" rows="3">批准本地沙箱验证</textarea>
+      <div class="dialog-actions"><button type="button" class="action-danger" data-action="reject">驳回</button><button type="submit" class="action-primary">确认批准</button></div>
+    </form>
+  </dialog>
+  <div id="announcer" class="visually-hidden" aria-live="polite"></div>
+</body>
+</html>

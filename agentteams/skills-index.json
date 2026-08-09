@@ -1,0 +1,44 @@
+{
+  "skills": [
+    {
+      "name": "incident-intake",
+      "version": "1.0.0",
+      "path": "skills/incident-intake"
+    },
+    {
+      "name": "collect-evidence",
+      "version": "1.0.0",
+      "path": "skills/collect-evidence"
+    },
+    {
+      "name": "correlate-change",
+      "version": "1.0.0",
+      "path": "skills/correlate-change"
+    },
+    {
+      "name": "test-hypothesis",
+      "version": "1.0.0",
+      "path": "skills/test-hypothesis"
+    },
+    {
+      "name": "plan-remediation",
+      "version": "1.0.0",
+      "path": "skills/plan-remediation"
+    },
+    {
+      "name": "apply-in-sandbox",
+      "version": "1.0.0",
+      "path": "skills/apply-in-sandbox"
+    },
+    {
+      "name": "verify-recovery",
+      "version": "1.0.0",
+      "path": "skills/verify-recovery"
+    },
+    {
+      "name": "execute-rollback",
+      "version": "1.0.0",
+      "path": "skills/execute-rollback"
+    }
+  ]
+}

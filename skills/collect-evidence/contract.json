@@ -1,0 +1,25 @@
+{
+  "id": "collect_evidence",
+  "name": "collect-evidence",
+  "version": "1.0.0",
+  "purpose": "采集并标准化多源运行证据。",
+  "inputs": [
+    "incident_id",
+    "time_window",
+    "service"
+  ],
+  "outputs": [
+    "evidence_bundle"
+  ],
+  "invocation_conditions": "事件进入分诊阶段时。",
+  "dependent_tools": [
+    "monitoring",
+    "telemetry"
+  ],
+  "failure_handling": "数据源不可用时保留缺口，禁止伪造缺失数据。",
+  "security_boundary": "只读；结果需标记来源和采集时间。",
+  "reuse_value": "可复用于任何可观测服务。",
+  "agent_ids": [
+    "evidence-agent"
+  ]
+}

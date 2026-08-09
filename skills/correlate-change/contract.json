@@ -1,0 +1,24 @@
+{
+  "id": "correlate_change",
+  "name": "correlate-change",
+  "version": "1.0.0",
+  "purpose": "将异常时间窗与发布及配置变更关联。",
+  "inputs": [
+    "evidence_bundle",
+    "deployment_history"
+  ],
+  "outputs": [
+    "candidate_changes"
+  ],
+  "invocation_conditions": "证据包达到最低完整度时。",
+  "dependent_tools": [
+    "repository",
+    "deployment"
+  ],
+  "failure_handling": "无相关变更时返回空集并扩大调查范围。",
+  "security_boundary": "代码仓库与发布记录均为只读。",
+  "reuse_value": "可迁移到不同Git及CI系统。",
+  "agent_ids": [
+    "evidence-agent"
+  ]
+}

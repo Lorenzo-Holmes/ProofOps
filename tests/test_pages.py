@@ -31,9 +31,10 @@ class GitHubPagesContractTests(unittest.TestCase):
     def test_pages_workflow_deploys_web_directory(self) -> None:
         workflow = (ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
 
-        self.assertIn("actions/configure-pages@v5", workflow)
-        self.assertIn("actions/upload-pages-artifact@v4", workflow)
-        self.assertIn("actions/deploy-pages@v4", workflow)
+        self.assertIn("actions/checkout@v7", workflow)
+        self.assertIn("actions/configure-pages@v6", workflow)
+        self.assertIn("actions/upload-pages-artifact@v5", workflow)
+        self.assertIn("actions/deploy-pages@v5", workflow)
         self.assertIn("path: ./web", workflow)
         self.assertIn("pages: write", workflow)
         self.assertIn("id-token: write", workflow)

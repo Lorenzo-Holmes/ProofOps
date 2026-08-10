@@ -6,6 +6,12 @@
 
 [KNOWN] 当前版本不依赖第三方 Python 包；Python 3.11+ 即可运行。浏览器界面、REST API、MCP JSON-RPC 端点和持久化存储由同一进程提供。
 
+## 在线演示
+
+[KNOWN] GitHub Pages 静态演示：[https://lorenzo-holmes.github.io/ProofOps/](https://lorenzo-holmes.github.io/ProofOps/)
+
+[KNOWN] 在线演示使用浏览器内静态 API 适配器运行成功恢复、验证失败回滚和人工驳回三条路径；事件保存在当前浏览器的 `localStorage`，审计接口会重新计算每个事件的 SHA-256。
+
 ## 已实现能力
 
 - [KNOWN] 六个不同职能 Agent 的 Identity、能力和安全边界。
@@ -131,6 +137,8 @@ $env:PYTHONPATH = "src"
 $env:PYTHONDONTWRITEBYTECODE = "1"
 python -m unittest discover -s tests -v
 node --check web/app.js
+node --check web/demo-api.js
+node tests/demo_api_runtime_test.js
 ```
 
 [KNOWN] `scripts/test.ps1`封装了同一组检查。

@@ -1,117 +1,278 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#0b0c0d">
-  <meta name="description" content="ProofOps 证据驱动的多智能体故障处置演示平台">
-  <title>ProofOps · Incident Command</title>
-  <link rel="stylesheet" href="/styles.css">
-  <script src="/app.js" defer></script>
+  <meta name="theme-color" content="#070706">
+  <meta name="description" content="ProofOps：证据驱动的多智能体故障处置与可信执行演示平台">
+  <title>ProofOps · 让自动执行留下证据</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./demo-api.js" defer></script>
+  <script src="./app.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#incident-board">跳至事件时间线</a>
-  <div class="grid-noise" aria-hidden="true"></div>
-  <header class="masthead">
-    <div class="brand-lockup" aria-label="ProofOps">
-      <span class="brand-index">P/01</span>
-      <span class="brand-word">PROOF<span>OPS</span></span>
-      <span class="brand-cn">证据驱动故障闭环</span>
-    </div>
-    <div class="system-state">
-      <span class="eyebrow">LOCAL COMMAND FABRIC</span>
-      <span id="connection-state" class="connection-pill" data-state="connecting">
+  <a class="skip-link" href="#incident-board">跳至现场演示</a>
+  <div class="ambient-grid" aria-hidden="true"></div>
+  <div class="ambient-glow ambient-glow-a" aria-hidden="true"></div>
+  <div class="ambient-glow ambient-glow-b" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <nav class="site-nav" aria-label="主导航">
+      <a class="brand" href="#top" aria-label="ProofOps 首页">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+        <span class="brand-name">ProofOps</span>
+      </a>
+      <div class="nav-links" aria-label="页面章节">
+        <a href="#product">产品</a>
+        <a href="#loop">可信闭环</a>
+        <a href="#workspace">现场演示</a>
+        <a href="https://github.com/Lorenzo-Holmes/ProofOps" target="_blank" rel="noopener noreferrer">开源</a>
+      </div>
+      <span id="connection-state" class="connection-pill" data-state="connecting" role="status" aria-live="polite">
         <span class="pulse-dot" aria-hidden="true"></span>
         <span class="connection-label">正在连接</span>
       </span>
-    </div>
+    </nav>
   </header>
-  <section class="metric-rail" aria-label="运行指标">
-    <article><span>事件总数</span><strong id="metric-total">00</strong></article>
-    <article><span>活动事件</span><strong id="metric-active">00</strong></article>
-    <article><span>已恢复</span><strong id="metric-resolved">00</strong></article>
-    <article><span>已回滚</span><strong id="metric-rollback">00</strong></article>
-    <article class="metric-wide"><span>审计完整度</span><strong id="metric-audit">100.0%</strong></article>
-    <article class="metric-wide"><span>TRACE覆盖</span><strong id="metric-trace">100.0%</strong></article>
-  </section>
-  <main class="command-grid">
-    <aside class="left-rail" aria-label="场景与团队控制">
-      <section class="panel injection-panel">
-        <div class="panel-heading"><span class="panel-code">INPUT/01</span><h2>故障注入</h2></div>
-        <label for="scenario-select">选择可重复样本</label>
-        <select id="scenario-select" aria-describedby="scenario-detail"></select>
-        <p id="scenario-detail" class="fine-print">正在载入故障样本…</p>
-        <button class="action-primary" type="button" data-action="create-incident"><span>创建事件</span><span aria-hidden="true">↗</span></button>
-      </section>
-      <section class="panel incident-queue-panel">
-        <div class="panel-heading">
-          <span class="panel-code">QUEUE/02</span><h2>事件队列</h2>
-          <button class="icon-button" type="button" data-action="refresh" aria-label="刷新事件队列">↻</button>
+
+  <main id="top">
+    <section id="product" class="hero section-shell" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> Evidence-native Agent Infra</p>
+        <h1 id="hero-title">让每一次自动执行，<br><em>都留下可验证的证据。</em></h1>
+        <p class="hero-lede">ProofOps 把多智能体故障响应变成一条可观察、可审批、可回滚的执行链。不是替人做决定，而是让每个决定都有来源、边界与结果。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#workspace">进入现场演示 <span aria-hidden="true">↘</span></a>
+          <a class="button button-quiet" href="#loop">查看可信闭环</a>
         </div>
-        <div id="incident-list" class="incident-list" aria-live="polite"></div>
-      </section>
-      <section class="panel agents-panel">
-        <div class="panel-heading"><span class="panel-code">TEAM/06</span><h2>Agent Identity</h2></div>
-        <ol id="agent-list" class="agent-list"></ol>
-      </section>
-    </aside>
-    <section class="operations-deck" aria-labelledby="incident-title">
-      <header class="incident-header">
-        <div>
-          <span id="incident-kicker" class="eyebrow">NO ACTIVE INCIDENT</span>
-          <h1 id="incident-title">选择样本并创建事件</h1>
-          <p id="incident-summary">系统将展示证据采集、根因验证、人工审批、受控执行与独立验收。</p>
-        </div>
-        <div class="incident-flags">
-          <span id="incident-severity" class="flag severity">—</span>
-          <span id="incident-status" class="flag status" data-status="idle">待命</span>
-        </div>
-      </header>
-      <ol id="state-pipeline" class="state-pipeline" aria-label="处置状态机">
-        <li data-stage="detected"><span>01</span>接入</li><li data-stage="triaging"><span>02</span>证据</li>
-        <li data-stage="diagnosing"><span>03</span>诊断</li><li data-stage="planning"><span>04</span>规划</li>
-        <li data-stage="awaiting_approval"><span>05</span>审批</li><li data-stage="executing"><span>06</span>执行</li>
-        <li data-stage="verifying"><span>07</span>验证</li><li data-stage="resolved"><span>08</span>闭环</li>
-      </ol>
-      <div class="deck-controls" role="group" aria-label="演示控制">
-        <button class="action-run" type="button" data-action="run-demo" disabled><span class="run-icon" aria-hidden="true">▶</span><span>自动运行</span></button>
-        <button class="action-secondary" type="button" data-action="advance" disabled>单步推进</button>
-        <span id="run-state" class="run-state">WAITING FOR INPUT</span>
+        <ul class="hero-notes" aria-label="产品边界">
+          <li>本地可复现</li>
+          <li>人工审批门</li>
+          <li>哈希链审计</li>
+        </ul>
       </div>
-      <section id="incident-board" class="timeline-panel" tabindex="-1" aria-label="审计事件时间线">
-        <div class="section-ruler"><span>TRACE TIMELINE</span><span id="trace-id">TRACE / —</span></div>
-        <div id="timeline" class="timeline">
-          <div class="empty-state"><span class="empty-cross" aria-hidden="true">＋</span><p>暂无执行证据</p><small>CREATE AN INCIDENT TO BEGIN</small></div>
+
+      <figure class="hero-visual" aria-labelledby="loop-caption">
+        <div class="loop-shell" aria-hidden="true">
+          <span class="loop-orbit loop-orbit-a"></span>
+          <span class="loop-orbit loop-orbit-b"></span>
+          <span class="loop-orbit loop-orbit-c"></span>
+          <div class="loop-core">
+            <span>PROOF</span>
+            <strong>OPS</strong>
+            <small>TRACE READY</small>
+          </div>
+          <span class="loop-node node-agent"><i></i>Agent</span>
+          <span class="loop-node node-evidence"><i></i>Evidence</span>
+          <span class="loop-node node-approval"><i></i>Approval</span>
+          <span class="loop-node node-action"><i></i>Action</span>
+          <span class="loop-node node-verify"><i></i>Verify</span>
         </div>
-      </section>
+        <figcaption id="loop-caption">从 Agent 到证据、审批、执行与验证的闭环轨道</figcaption>
+      </figure>
     </section>
-    <aside class="right-rail" aria-label="证据与审计详情">
-      <section class="panel audit-panel">
-        <div class="panel-heading"><span class="panel-code">AUDIT/CHAIN</span><h2>证据完整性</h2></div>
-        <div class="audit-seal" id="audit-seal" data-valid="unknown"><span class="seal-mark">#</span><div><strong>等待事件</strong><small>SHA-256 HASH CHAIN</small></div></div>
-        <dl class="audit-stats"><div><dt>事件数</dt><dd id="audit-events">0</dd></div><div><dt>审批边界</dt><dd id="audit-approval">未触发</dd></div><div><dt>风险分</dt><dd id="audit-risk">—</dd></div></dl>
-      </section>
-      <section class="panel evidence-panel">
-        <div class="panel-heading"><span class="panel-code">EVIDENCE/LIVE</span><h2>当前证据</h2></div>
-        <div id="event-detail" class="event-detail"><p class="fine-print">点击时间线事件查看来源、指标与哈希摘要。</p></div>
-      </section>
-      <section class="panel contract-panel">
-        <div class="panel-heading"><span class="panel-code">SKILL/CONTRACT</span><h2>调用契约</h2></div>
-        <div id="skill-detail" class="skill-detail"><span class="mono-tag">NO SKILL SELECTED</span><p>Skill输入、输出、失败处理和安全边界将在执行时显示。</p></div>
-      </section>
-    </aside>
+
+    <section class="trust-strip section-shell" aria-label="实时运行指标">
+      <div class="trust-heading">
+        <span class="signal-dot" aria-hidden="true"></span>
+        <span>Live control plane</span>
+      </div>
+      <article><span>事件</span><strong id="metric-total">0</strong></article>
+      <article><span>活动</span><strong id="metric-active">0</strong></article>
+      <article><span>已恢复</span><strong id="metric-resolved">0</strong></article>
+      <article><span>已回滚</span><strong id="metric-rollback">0</strong></article>
+      <article><span>审计完整度</span><strong id="metric-audit">—</strong></article>
+      <article><span>Trace 覆盖</span><strong id="metric-trace">—</strong></article>
+    </section>
+
+    <section id="loop" class="principles section-shell" aria-labelledby="principles-title">
+      <header class="section-heading">
+        <p class="eyebrow">Designed for accountable autonomy</p>
+        <h2 id="principles-title">自动化可以更快，<br>责任边界必须更清楚。</h2>
+        <p>每一个结论回到证据，每一次写操作经过门禁，每一个结果由独立步骤确认。</p>
+      </header>
+      <div class="principle-grid">
+        <article class="principle-card">
+          <span class="card-index">01 / EVIDENCE</span>
+          <div class="principle-icon icon-evidence" aria-hidden="true"><i></i><i></i><i></i></div>
+          <h3>证据先于结论</h3>
+          <p>指标、日志、变更与上下文进入同一 Trace，诊断不再依赖不可复核的口头判断。</p>
+        </article>
+        <article class="principle-card featured">
+          <span class="card-index">02 / APPROVAL</span>
+          <div class="principle-icon icon-approval" aria-hidden="true"><i></i></div>
+          <h3>高风险动作有人把关</h3>
+          <p>Agent 负责提出计划，人工审批门决定是否执行；批准人、原因和边界进入审计链。</p>
+        </article>
+        <article class="principle-card">
+          <span class="card-index">03 / VERIFY</span>
+          <div class="principle-icon icon-verify" aria-hidden="true"><i></i></div>
+          <h3>执行之后独立验证</h3>
+          <p>恢复检查与失败回滚不是附加步骤，而是自动执行能否被信任的最后一环。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="capability-story section-shell" aria-labelledby="capability-title">
+      <div class="capability-copy">
+        <p class="eyebrow">Composable by design</p>
+        <h2 id="capability-title">不是更多 Agent，<br>而是更清晰的协作契约。</h2>
+        <p>角色负责判断，Skill 负责可控执行，事件链负责把输入、输出与失败处理连接起来。</p>
+      </div>
+      <div class="capability-system" aria-label="ProofOps 组件规模与闭环路径">
+        <div class="capability-stat"><strong>06</strong><span>专职 Agent</span></div>
+        <div class="capability-stat"><strong>08</strong><span>标准 Skill</span></div>
+        <div class="capability-stat accent"><strong>01</strong><span>统一审计链</span></div>
+        <div class="capability-route">
+          <span>Observe</span><i>→</i><span>Reason</span><i>→</i><span>Approve</span><i>→</i><span>Act</span><i>→</i><span>Verify</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="workspace" class="workspace-section section-shell" aria-labelledby="workspace-title">
+      <header class="workspace-intro">
+        <div>
+          <p class="eyebrow"><span></span> Interactive local demo</p>
+          <h2 id="workspace-title">从告警到闭环，现场跑一遍。</h2>
+        </div>
+        <p>选择故障样本，观察 Agent 如何收集证据、提出计划，并在人工审批后执行、验证或回滚。</p>
+      </header>
+
+      <div class="workspace-shell">
+        <div class="workspace-toolbar">
+          <div class="toolbar-brand"><span aria-hidden="true"></span> ProofOps Command</div>
+          <div class="toolbar-meta"><span>LOCAL FIXTURE</span><span>MCP CONTRACT</span><span>HUMAN IN LOOP</span></div>
+        </div>
+
+        <div class="command-grid">
+          <aside class="left-rail" aria-label="场景与团队控制">
+            <section class="panel injection-panel">
+              <div class="panel-heading">
+                <span class="panel-code">INPUT / 01</span>
+                <h3>故障样本</h3>
+              </div>
+              <label for="scenario-select">选择可重复场景</label>
+              <select id="scenario-select" aria-describedby="scenario-detail"></select>
+              <p id="scenario-detail" class="fine-print">正在载入故障样本…</p>
+              <button class="action-primary" type="button" data-action="create-incident">
+                <span>创建事件</span><span aria-hidden="true">↗</span>
+              </button>
+            </section>
+
+            <section class="panel incident-queue-panel">
+              <div class="panel-heading">
+                <span class="panel-code">QUEUE / 02</span>
+                <h3>事件队列</h3>
+                <button class="icon-button" type="button" data-action="refresh" aria-label="刷新事件队列">↻</button>
+              </div>
+              <div id="incident-list" class="incident-list" aria-live="polite"></div>
+            </section>
+
+            <section class="panel agents-panel">
+              <div class="panel-heading">
+                <span class="panel-code">TEAM / 06</span>
+                <h3>Agent 团队</h3>
+              </div>
+              <ol id="agent-list" class="agent-list"></ol>
+            </section>
+          </aside>
+
+          <section class="operations-deck" aria-labelledby="incident-title">
+            <header class="incident-header">
+              <div>
+                <span id="incident-kicker" class="eyebrow">NO ACTIVE INCIDENT</span>
+                <h2 id="incident-title">选择样本并创建事件</h2>
+                <p id="incident-summary">系统将展示证据采集、根因验证、人工审批、受控执行与独立验收。</p>
+              </div>
+              <div class="incident-flags">
+                <span id="incident-severity" class="flag severity">—</span>
+                <span id="incident-status" class="flag status" data-status="idle">待命</span>
+              </div>
+            </header>
+
+            <ol id="state-pipeline" class="state-pipeline" aria-label="处置状态机">
+              <li data-stage="detected"><span>01</span>接入</li>
+              <li data-stage="triaging"><span>02</span>证据</li>
+              <li data-stage="diagnosing"><span>03</span>诊断</li>
+              <li data-stage="planning"><span>04</span>规划</li>
+              <li data-stage="awaiting_approval"><span>05</span>审批</li>
+              <li data-stage="executing"><span>06</span>执行</li>
+              <li data-stage="verifying"><span>07</span>验证</li>
+              <li data-stage="resolved"><span>08</span>闭环</li>
+            </ol>
+
+            <div class="deck-controls" role="group" aria-label="演示控制">
+              <button class="action-run" type="button" data-action="run-demo" disabled>
+                <span class="run-icon" aria-hidden="true">▶</span><span>自动运行</span>
+              </button>
+              <button class="action-secondary" type="button" data-action="advance" disabled>单步推进</button>
+              <span id="run-state" class="run-state" role="status" aria-live="polite">WAITING FOR INPUT</span>
+            </div>
+
+            <section id="incident-board" class="timeline-panel" tabindex="-1" aria-label="审计事件时间线">
+              <div class="section-ruler">
+                <span>TRACE TIMELINE</span><span id="trace-id">TRACE / —</span>
+              </div>
+              <div id="timeline" class="timeline">
+                <div class="empty-state">
+                  <span class="empty-cross" aria-hidden="true">＋</span>
+                  <p>暂无执行证据</p><small>CREATE AN INCIDENT TO BEGIN</small>
+                </div>
+              </div>
+            </section>
+          </section>
+
+          <aside class="right-rail" aria-label="证据与审计详情">
+            <section class="panel audit-panel">
+              <div class="panel-heading"><span class="panel-code">AUDIT / CHAIN</span><h3>证据完整性</h3></div>
+              <div class="audit-seal" id="audit-seal" data-valid="unknown">
+                <span class="seal-mark" aria-hidden="true">#</span>
+                <div><strong>等待事件</strong><small>HASH CHAIN STRUCTURE</small></div>
+              </div>
+              <dl class="audit-stats">
+                <div><dt>事件数</dt><dd id="audit-events">0</dd></div>
+                <div><dt>审批边界</dt><dd id="audit-approval">未触发</dd></div>
+                <div><dt>风险分</dt><dd id="audit-risk">—</dd></div>
+              </dl>
+            </section>
+
+            <section class="panel evidence-panel">
+              <div class="panel-heading"><span class="panel-code">EVIDENCE / LIVE</span><h3>当前证据</h3></div>
+              <div id="event-detail" class="event-detail"><p class="fine-print">点击时间线事件查看来源、指标与哈希摘要。</p></div>
+            </section>
+
+            <section class="panel contract-panel">
+              <div class="panel-heading"><span class="panel-code">SKILL / CONTRACT</span><h3>调用契约</h3></div>
+              <div id="skill-detail" class="skill-detail">
+                <span class="mono-tag">NO SKILL SELECTED</span>
+                <p>Skill 输入、输出、失败处理和安全边界将在执行时显示。</p>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </section>
   </main>
-  <footer class="footer-bar"><span>PROOFOPS / LOCAL FIXTURE / V0.1.0</span><span>AGENTTEAMS-READY · MCP-CONTRACT · HUMAN-IN-THE-LOOP</span></footer>
-  <dialog id="approval-dialog" class="approval-dialog" aria-labelledby="approval-title">
+
+  <footer class="site-footer section-shell">
+    <div><a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true"><i></i><i></i></span><span class="brand-name">ProofOps</span></a><p>为可验证的 Agent 执行而设计。</p></div>
+    <div class="footer-links"><a href="#product">产品</a><a href="#workspace">演示</a><a href="https://github.com/Lorenzo-Holmes/ProofOps" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div>
+    <p class="footer-meta">LOCAL FIXTURE · OPEN SOURCE · V0.1.0</p>
+  </footer>
+
+  <dialog id="approval-dialog" class="approval-dialog" aria-labelledby="approval-title" aria-describedby="approval-copy approval-error">
     <form method="dialog" id="approval-form">
-      <span class="dialog-code">HUMAN GATE / REQUIRED</span><h2 id="approval-title">批准受控执行？</h2>
+      <span class="dialog-code">HUMAN GATE / REQUIRED</span>
+      <h2 id="approval-title">批准受控执行？</h2>
       <p id="approval-copy">修复计划包含写操作。批准后仅在本地沙箱执行，并保留幂等键和回滚点。</p>
-      <label for="approval-actor">审批人</label><input id="approval-actor" name="actor" value="demo-judge" autocomplete="off" required>
-      <label for="approval-reason">审批意见</label><textarea id="approval-reason" name="reason" rows="3">批准本地沙箱验证</textarea>
+      <div class="dialog-field"><label for="approval-actor">审批人</label><input id="approval-actor" name="actor" value="demo-judge" autocomplete="off" aria-describedby="approval-error" aria-invalid="false" required></div>
+      <div class="dialog-field"><label for="approval-reason">审批意见</label><textarea id="approval-reason" name="reason" rows="3">批准本地沙箱验证</textarea></div>
+      <p id="approval-error" class="form-error" role="alert" hidden></p>
       <div class="dialog-actions"><button type="button" class="action-danger" data-action="reject">驳回</button><button type="submit" class="action-primary">确认批准</button></div>
     </form>
   </dialog>
+
   <div id="announcer" class="visually-hidden" aria-live="polite"></div>
 </body>
 </html>
